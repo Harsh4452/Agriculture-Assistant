@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agricultural Assistant - Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E7D32;
+            --primary-light: #4CAF50;
+            --secondary-color: #66BB6A; 
+            --accent-color: #FFA000;
+            --light-bg: #f9fbf7;
+            --dark-bg: #263238;
+            --text-dark: #212121;
+            --text-muted: #78909C;
+            --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 12px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px !important;
+            border-radius: 6px;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            margin-bottom: 24px;
+            overflow: hidden;
+            background-color: white;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 16px 16px 0 0 !important;
+            font-weight: 600;
+            padding: 16px 20px;
+            border-bottom: none;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 24px;
+            height: 100%;
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--primary-color);
+        }
+        
+        .prediction-badge {
+            background: linear-gradient(135deg, var(--accent-color), #FF6F00);
+            color: white;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .welcome-section h2 {
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .stats-card {
+            background-color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stats-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: rgba(76, 175, 80, 0.1);
+            margin-bottom: 16px;
+        }
+        
+        .stats-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .stats-label {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.2);
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.2);
+        }
+        
+        .btn-light {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-light:hover {
+            background-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--dark-bg), #1a2327);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            border-radius: 32px 32px 0 0;
+        }
+        
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .weather-widget {
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-dark);
+        }
+        
+        .weather-widget img {
+            width: 80px;
+            height: 80px;
+            margin: 10px auto;
+        }
+        
+        .weather-widget h3 {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .weather-widget h4 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        
+        .crop-img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .list-group-item {
+            border: none;
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .list-group-item:hover {
+            background-color: rgba(76, 175, 80, 0.05);
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .table td {
+            vertical-align: middle;
+            padding: 16px 12px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .quick-action-icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-dark);
+        }
+        
+        .empty-state {
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        
+        .empty-state p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        
+        .crop-calendar-item {
+            background-color: rgba(76, 175, 80, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .crop-calendar-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+        }
+        
+        .scroll-table {
+            max-height: 350px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        
+        .scroll-table::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scroll-table::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .scroll-table::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+    <!-- Main Content -->
+    <div class="container py-5">
+        <!-- Welcome Section -->
+        <div class="welcome-section mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2>Welcome back, {{ current_user.username }}! 👋</h2>
+                    <p class="mb-0">Track your crop predictions, monitor market prices, and make data-driven farming decisions all in one place.</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="action-buttons">
+                        <a href="{{ url_for('crop_prediction') }}" class="btn btn-light">
+                            <i class="fas fa-seedling me-2"></i>New Crop
+                        </a>
+                        <a href="{{ url_for('price_prediction') }}" class="btn btn-light">
+                            <i class="fas fa-coins me-2"></i>New Price
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-seedling text-success fa-2x"></i>
+                    </div>
+                    <div class="stats-value">{{crop_predictions|length }}</div>
+                    <div class="stats-label">Crop Predictions</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-coins text-warning fa-2x"></i>
+                    </div>
+                    <div class="stats-value">{{ price_predictions|length }}</div>
+                    <div class="stats-label">Price Predictions</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-calendar-alt text-primary fa-2x"></i>
+                    </div>
+                    <div class="stats-value">{{ (crop_predictions|length + price_predictions|length) }}</div>
+                    <div class="stats-label">Total Predictions</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Recent Predictions Column -->
+            <div class="col-lg-8">
+                <!-- Recent Crop Predictions -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-seedling me-2"></i>Recent Crop Predictions</span>
+                        <a href="{{ url_for('prediction_history') }}" class="btn btn-sm btn-light">View All</a>
+                    </div>
+                    <div class="card-body">
+                        {% if crop_predictions %}
+                            <div class="scroll-table">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Soil Data</th>
+                                            <th>Predicted Crop</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for prediction in crop_predictions %}
+                                        <tr>
+                                            <td>{{ prediction.created_at.strftime('%b %d, %Y') }}</td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    N:{{ prediction.nitrogen }}, 
+                                                    P:{{ prediction.phosphorus }}, 
+                                                    K:{{ prediction.potassium }}, 
+                                                    pH:{{ prediction.ph }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <span class="prediction-badge">{{ prediction.predicted_crop }}</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-seedling text-muted mb-3"></i>
+                                <p>No crop predictions yet.</p>
+                                <a href="{{ url_for('crop_prediction') }}" class="btn btn-primary">
+                                    Make Your First Prediction
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Recent Price Predictions -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-coins me-2"></i>Recent Price Predictions</span>
+                        <a href="{{ url_for('prediction_history') }}" class="btn btn-sm btn-light">View All</a>
+                    </div>
+                    <div class="card-body">
+                        {% if price_predictions %}
+                            <div class="scroll-table">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Commodity</th>
+                                            <th>Location</th>
+                                            <th>Price (₹/quintal)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for prediction in price_predictions %}
+                                        <tr>
+                                            <td>{{ prediction.created_at.strftime('%b %d, %Y') }}</td>
+                                            <td>{{ prediction.commodity.title() }}</td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    {{ prediction.market.title() }}, 
+                                                    {{ prediction.district.title() }}, 
+                                                    {{ prediction.state.title() }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <span class="prediction-badge">₹{{ prediction.predicted_price }}</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-coins text-muted mb-3"></i>
+                                <p>No price predictions yet.</p>
+                                <a href="{{ url_for('price_prediction') }}" class="btn btn-primary">
+                                    Predict Market Prices
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Column -->
+            <div class="col-lg-4">
+                <!-- Quick Actions -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-3">
+                            <a href="{{ url_for('crop_prediction') }}" class="btn btn-primary">
+                                <i class="fas fa-seedling quick-action-icon"></i>New Crop Prediction
+                            </a>
+                            <a href="{{ url_for('price_prediction') }}" class="btn btn-primary">
+                                <i class="fas fa-coins quick-action-icon"></i>New Price Prediction
+                            </a>
+                            <a href="{{ url_for('prediction_history') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-history quick-action-icon"></i>View Prediction History
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weather Widget -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-cloud-sun me-2"></i>Weather Forecast
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="weather-widget">
+                            {% if weather %}
+                            <div>
+                                <h3>Weather in {{ city }}</h3>
+                                <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="Weather Icon">
+                                <h4>{{ weather.temperature }}°C</h4>
+                                <p class="mb-1 fw-bold">{{ weather.description }}</p>
+                                <p class="text-muted small">{{ weather.city }}, {{ weather.country }}</p>
+                                <p class="text-muted small">{{ weather.datetime }}</p>
+                            </div>
+                            {% else %}
+                            <div class="py-4">
+                                <i class="fas fa-cloud-rain fa-3x text-primary mb-3"></i>
+                                <p class="text-center text-danger">Unable to fetch weather data</p>
+                                <p class="text-muted small">Please check your internet connection</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crop Calendar -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-calendar me-2"></i>Seasonal Crop Calendar
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3 text-muted">Current Season Recommendations</h6>
+                        <div class="crop-calendar-list">
+                            <div class="crop-calendar-item d-flex align-items-center mb-3">
+                                <div class="bg-success rounded-circle crop-calendar-icon">
+                                    <i class="fas fa-seedling text-white fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Wheat</h6>
+                                    <small class="text-success">Ideal planting time</small>
+                                </div>
+                            </div>
+                            <div class="crop-calendar-item d-flex align-items-center mb-3">
+                                <div class="bg-warning rounded-circle crop-calendar-icon">
+                                    <i class="fas fa-leaf text-white fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Mustard</h6>
+                                    <small class="text-warning">Planting time approaching</small>
+                                </div>
+                            </div>
+                            <div class="crop-calendar-item d-flex align-items-center">
+                                <div class="bg-danger rounded-circle crop-calendar-icon">
+                                    <i class="fas fa-carrot text-white fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">Potato</h6>
+                                    <small class="text-danger">Harvesting season</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Agricultural Assistant</h5>
+                    <p class="small">Empowering farmers with data-driven insights for better crop management and market decisions.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="small">&copy; 2025 Agricultural Assistant | All rights reserved</p>
+                    <div class="mt-2">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

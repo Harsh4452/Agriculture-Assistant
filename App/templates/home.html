@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agricultural Assistant</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif; /* Applied Google Font */
+      overflow-x: hidden; /* Prevent horizontal scroll issues */
+    }
+
+    .bg-img {
+      background-image: url('static/images/pred.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative; /* Needed for overlay */
+      background-attachment: fixed; /* Parallax effect */
+    }
+
+    .bg-img::before { /* Subtle dark overlay for readability */
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3); /* Adjust darkness as needed */
+        z-index: 1;
+    }
+
+    .overlay {
+      background-color: rgba(255, 255, 255, 0.95); /* Slightly less transparent */
+      padding: 50px; /* More padding */
+      border-radius: 20px;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+      text-align: center;
+      max-width: 700px; /* Wider for more content */
+      width: 90%;
+      position: relative; /* Bring to front of bg-img::before */
+      z-index: 2;
+      
+      /* Animation for overlay */
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInSlideUp 1s forwards 0.8s; /* Delay animation */
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: #2e7d32; /* Darker green */
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Navbar shadow */
+      animation: fadeInDown 0.8s forwards; /* Navbar animation */
+      z-index: 10; /* Ensure navbar is above all */
+    }
+
+    .navbar-brand {
+      color: #fff !important;
+      font-family: 'Montserrat', sans-serif; /* Applied Google Font */
+      font-size: 1.8rem; /* Larger brand text */
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .navbar .nav-link,
+    .navbar button a {
+      color: #fff !important;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.05rem; /* Slightly larger nav links */
+      transition: all 0.3s ease; /* Smooth transitions */
+      position: relative; /* For underline effect */
+    }
+
+    .navbar .nav-link:hover,
+    .navbar button a:hover {
+      color: #c8e6c9 !important; /* Lighter green on hover */
+      transform: translateY(-2px); /* Subtle lift on hover */
+    }
+
+    .navbar .nav-link::after { /* Underline effect for nav links */
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        background: #a5d6a7; /* Lighter green for underline */
+        bottom: -5px;
+        left: 0;
+        transition: width 0.3s ease;
+    }
+
+    .navbar .nav-link:hover::after {
+        width: 100%;
+    }
+
+    .navbar .btn-outline-light {
+      border-color: #a5d6a7; /* Lighter border color for buttons */
+      color: #a5d6a7;
+      transition: all 0.3s ease;
+    }
+
+    .navbar .btn-outline-light:hover {
+      background-color: #a5d6a7; /* Fill with light green on hover */
+      color: #2e7d32 !important; /* Dark green text on hover */
+      transform: translateY(-2px); /* Subtle lift on hover */
+    }
+
+    /* Heading and Paragraph in Overlay */
+    h1 {
+      color: #1b5e20; /* Darker green for heading */
+      font-family: 'Montserrat', sans-serif; /* Applied Google Font */
+      font-weight: 800; /* Extra bold */
+      font-size: 3.2rem; /* Larger heading */
+      margin-bottom: 20px;
+      animation: fadeIn 1s forwards 1.5s; /* Delay for heading fade-in */
+      opacity: 0;
+    }
+
+    .text-muted {
+      color: #555 !important; /* Darker grey for better contrast */
+      font-size: 1.15rem; /* Larger paragraph text */
+      line-height: 1.6;
+      margin-bottom: 30px;
+      animation: fadeIn 1s forwards 1.8s; /* Delay for paragraph fade-in */
+      opacity: 0;
+    }
+
+    /* Get Started Button */
+    .btn-success {
+      background-color: #4CAF50; /* Standard green for the main CTA */
+      border-color: #4CAF50;
+      padding: 15px 35px; /* Larger padding */
+      font-size: 1.25rem; /* Larger font */
+      font-weight: 600;
+      border-radius: 50px; /* More rounded, pill-like */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); /* Stronger shadow */
+      transition: all 0.3s ease;
+      animation: popIn 0.6s forwards 2.2s; /* Pop-in animation */
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .btn-success:hover {
+      background-color: #388e3c; /* Darker green on hover */
+      border-color: #388e3c;
+      transform: translateY(-5px) scale(1.02); /* Lift and slight scale on hover */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    /* --- Animations --- */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes popIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 992px) {
+      .overlay {
+        padding: 40px;
+        max-width: 600px;
+      }
+      h1 {
+        font-size: 2.8rem;
+      }
+      .text-muted {
+        font-size: 1.05rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.5rem;
+      }
+      .navbar-toggler {
+        filter: invert(1); /* Make toggler icon white */
+      }
+      .overlay {
+        padding: 30px;
+        border-radius: 15px;
+      }
+      h1 {
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+      }
+      .text-muted {
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+      }
+      .btn-success {
+        padding: 12px 25px;
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .overlay {
+        padding: 25px;
+        width: 95%; /* Take up more width on small screens */
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .text-muted {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Agricultural Assistant</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            </ul>
+        <form class="d-flex" role="search">
+          <a class="btn btn-outline-light mx-2" href="{{url_for('login')}}">Login</a>
+          <a class="btn btn-outline-light" href="{{url_for('register')}}">Register</a>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <div class="bg-img">
+    <div class="overlay">
+      <h1>Welcome to Agricultural Assistant</h1>
+      <a href="{{url_for('predict_yield')}}" class="btn btn-success mt-3" >Go To Yield</a>
+      <p class="text-muted">Unlock the power of AI-driven agriculture. Predict optimal crops for your region and soil, forecast yields and market prices, and maximize your farm's potential.</p>
+      <a href="{{url_for('register')}}" class="btn btn-success mt-3">Get Started Now</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

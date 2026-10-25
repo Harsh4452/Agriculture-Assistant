@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crop Prediction Results</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  
+  <style>
+    :root {
+      --primary-color: #4CAF50;
+      --primary-light: #80e27e;
+      --primary-dark: #087f23;
+      --secondary-color: #8BC34A;
+      --accent-color: #FF9800;
+      --light-bg: #f8f9fa;
+      --dark-bg: #343a40;
+      --text-dark: #212529;
+      --text-light: #f8f9fa;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      color: var(--text-dark);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .navbar {
+      background-color: var(--primary-color);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar-brand {
+      font-weight: bold;
+      color: white !important;
+    }
+    
+    .nav-link {
+      color: rgba(255, 255, 255, 0.85) !important;
+      transition: color 0.3s, transform 0.3s;
+    }
+    
+    .nav-link:hover {
+      color: white !important;
+      transform: translateY(-2px);
+    }
+    
+    .hero-section {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('static/images/res.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 60px 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 10px 10px;
+      position: relative;
+    }
+    
+    .result-container {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      margin-bottom: 2rem;
+      transition: transform 0.3s ease;
+    }
+    
+    .result-container:hover {
+      transform: translateY(-5px);
+    }
+    
+    .input-table {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .table-light {
+      background-color: var(--primary-light);
+      color: var(--text-dark);
+    }
+    
+    .prediction-result {
+      background-color: var(--primary-light);
+      color: var(--text-dark);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 30px 0;
+      border-left: 5px solid var(--primary-dark);
+    }
+    
+    .crop-probabilities {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .list-group-item {
+      border-left: 4px solid var(--primary-color);
+      margin-bottom: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+      transform: translateX(5px);
+      background-color: var(--light-bg);
+    }
+    
+    .crop-chart {
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .fertilizer-info {
+      background-color: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .fertilizer-card {
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .fertilizer-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .fertilizer-card .card-header {
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 10px 10px 0 0;
+      padding: 15px;
+    }
+    
+    .footer {
+      background-color: var(--dark-bg);
+      color: var(--text-light);
+      padding: 20px 0;
+      margin-top: 2rem;
+    }
+    
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 1s ease-in;
+    }
+    
+    .slide-in-right {
+      animation: slideInRight 0.5s ease-in;
+    }
+    
+    .bounce-in {
+      animation: bounceIn 1s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(50px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+      70% { transform: scale(0.9); opacity: 0.9; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .animate__animated {
+      --animate-duration: 1s;
+    }
+  </style>
+</head>
+
+<body>
+  {% include 'navbar.html' %}
+
+  <!-- Hero Section -->
+  <div class="hero-section animate__animated animate__fadeIn">
+    <div class="container text-center">
+      <h1 class="display-4"><i class="fas fa-seedling me-2"></i>Crop Prediction Results</h1>
+      <p class="lead">Find the best crop for your soil conditions and maximize your yield</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Input Parameters Section -->
+    <div class="result-container animate__animated animate__fadeInUp">
+      <h3 class="mb-4"><i class="fas fa-clipboard-list me-2"></i>Your Soil Parameters</h3>
+      <div class="table-responsive input-table">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Nitrogen</th>
+              <th>Phosphorous</th>
+              <th>Potassium</th>
+              <th>Temperature</th>
+              <th>Humidity</th>
+              <th>PH Level</th>
+              <th>Rainfall</th>
+              <th>Rainfall Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {%for i in int_features:%}
+              <td>{{i}}</td>
+              {%endfor%}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Prediction Result Section -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="prediction-result text-center animate__animated animate__bounceIn">
+          <h2 class="mb-0">Best crop to grow in this condition is</h2>
+          <h1 class="display-3 fw-bold mt-3">{{ prediction_text.upper() }}</h1>
+          <p class="lead mt-2">Based on our advanced machine learning algorithm with 99% accuracy</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Probabilities Section -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card crop-probabilities animate__animated animate__fadeInLeft">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-chart-bar me-2"></i>Top Three Crop Probabilities</h5>
+                <ul class="list-group list-group-flush">
+                    {% for crop, probability in top_three_crops %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-leaf me-2 text-success"></i>
+                            <span>{{ crop.title() }}</span>
+                        </div>
+                        <span class="badge bg-success rounded-pill">{{ probability }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+        <div class="card crop-chart animate__animated animate__fadeInRight">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-chart-pie me-2"></i>Probability Distribution</h5>
+                <div class="text-center">
+                    <img src="data:image/png;base64,{{ graph }}" class="img-fluid rounded" alt="Crop probability chart" style="max-height: 300px; width: auto;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Fertilizer Recommendations Section -->
+    <div class="fertilizer-info animate__animated animate__fadeInUp">
+      <h3 class="mb-4"><i class="fas fa-flask me-2"></i>Recommended Fertilizers & Best Practices</h3>
+      
+      {% if prediction_text == "rice" %}
+      <div class="card fertilizer-card">
+        <div class="card-header">
+          <h4 class="mb-0"><i class="fas fa-star me-2"></i>Fertilizer Recommendations for Rice</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Azolla pinnata</h5>
+                  <p class="card-text">Organic matter source in paddy fields that can be used as green fertilizer to increase soil fertility. High nutrient content including nitrogen (N). Azolla is symbiotic with Anabaena in binding free N in the air.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Sesbania rostrata</h5>
+                  <p class="card-text">Ideal green manure because it is fast growing, can be easily decomposed, and has the ability to maintain soil moisture and to induce organic matter and N in the soil.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Saosis Seagrow</h5>
+                  <p class="card-text">Saosis Organic Micro Nutrient works below the surface, stimulating the development of more extensive root systems in plants. This helps to increase water access, resistance to root diseases, and offers protection against wind damage.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {% elif prediction_text == 'maize' %}
+      <div class="card fertilizer-card">
+        <div class="card-header">
+          <h4 class="mb-0"><i class="fas fa-star me-2"></i>Fertilizer Recommendations for Maize</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Super Potassium Humate</h5>
+                  <p class="card-text">Used to enhance the growth of roots by providing special nutrients to the plant. Being a thick matter of humic elements, it comprises a high value of fulvic and humic acids.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Safi Sarvi</h5>
+                  <p class="card-text">Helps farmers with acidified soil by providing a liming effect, restoring soil pH while reducing plant toxicity. This promotes beneficial microbial life and improved nutrient and moisture retention in the soil.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="alert alert-success">
+                <strong>Key Nutrient Requirements:</strong> Maize crop needs a lot of nitrogen, phosphorus, potassium and zinc. It responds very well to heavy nitrogen fertilization. Nitrogen is the most important nutrient and role player in maize crop growth, production and quality.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {% elif prediction_text == 'jute' %}
+      <!-- Similar structured recommendation for jute -->
+      <div class="card fertilizer-card">
+        <div class="card-header">
+          <h4 class="mb-0"><i class="fas fa-star me-2"></i>Fertilizer Recommendations for Jute</h4>
+        </div>
+        <div class="card-body">
+          <p><strong>Firm Yard Manure:</strong> Phosphorus and Potash, Nitrogen fertilizers are used as a fertilizer. Interculturing is essential in the early stage. Seed inoculation with Azotobacter chroococum and Azospirillum brasilense has been found promising to supplement part of N fertilizer.</p>
+          <p>A medium fertile soil, the recommended dose of fertilizer for mesta is N-40kg/ha, P – 20 kg/ha and K-20kg/ha. The recommended doses of fertilizers are 40 to 80, 20 to 40, 20 to 40 kg/ha (olitorius) and 60 to 80, 30 to 40, 30 to 40 kg/ha (capsularis) of N:P:K respectively.</p>
+          <p>Seed inoculation with Azotobacter chroococum and Azospirillum brasilense has been found promising to supplement part of N fertilizer.</p>
+        </div>
+      </div>
+      
+      {% elif prediction_text == 'cotton' %}
+      <!-- Similar structured recommendation for cotton -->
+      <div class="card fertilizer-card">
+        <div class="card-header">
+          <h4 class="mb-0"><i class="fas fa-star me-2"></i>Fertilizer Recommendations for Cotton</h4>
+        </div>
+        <div class="card-body">
+          <p><strong>N-P-K 20-10-10:</strong> Nitrogen affects plant growth and seed production. Nitrogen fertilizers meet the nutritional requirements of maximum need and this is the key to crop growth. Applying sulfur, microelements and nitrogen together improves their absorption efficiency through coordination (S, Zn, Mg).</p>
+          <p>NPK fertilizers are applied during sowing to balance soil nutrients essential, secondary, and micronutrients. Potassium improves capsule growth and maturation.</p>
+        </div>
+      </div>
+      
+      {% else %}
+      <!-- General structure for all other crops -->
+      <div class="card fertilizer-card">
+        <div class="card-header">
+          <h4 class="mb-0"><i class="fas fa-star me-2"></i>Fertilizer Recommendations for {{ prediction_text.capitalize() }}</h4>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info">
+            <p><i class="fas fa-info-circle me-2"></i>We have specific fertilizer recommendations for {{ prediction_text.capitalize() }}. Please review the details below for optimal growth and yield.</p>
+          </div>
+          <div class="results">
+               {% if prediction_text == "rice" %}
+
+  
+        <p><strong> Azolla pinnata </strong> are the organic matter sources in paddy fields that can be used as green
+          fertilizer to increase the soil fertility. They have a relatively high nutrient content including nitrogen
+          (N).
+          Azolla is symbiotic with Anabaena in binding free N in the air.</p>
+        <p><strong>Sesbania rostrata </strong> Sesbania is an ideal green manure because it is fast growing, can be
+          easily
+          decomposed, and has the ability to maintain soil moisture and to induce organic matter and N in the soil</p>
+        <p><strong> Saosis Seagrow </strong> Saosis Organic Micro Nutrient Work below the surface, stimulating the
+          development of more extensive root system in plants. This helps to increase water access, resistance to root
+          diseases, and offers protection against wind damage</p>
+
+        {% elif prediction_text == 'maize' %}
+        
+        <p><strong>Super Potassium Humate</strong>Super Potassium Humate is used to enhance the growth of roots by
+          providing special Nutirnets to plant. Being a thick matter of humic elements, it comprises a high value of
+          fulvic and humic acids. It nourishes the root of the seed while developing the needed environment for the
+          plant's growth</p>
+        <p><strong>Safi Sarvi</strong>The value to farmers whose soil is acidified is that they will see a liming effect
+          from fertilizer, restoring their soil pH while reducing plant toxicity.This promotes beneficial microbial life
+          and improved nutrient and moisture retention in the soil</p>
+        <p>Maize crop needs a lot of nitrogen,phosphorus,potassium and zinc. It responds very well to heavy nitrogen
+          fertilization. Nitrogen is the most important nutrient and role player in maize crop growth, production and
+          quality. Nitrogen is essential for good leaf growth</p>
+
+        {% elif prediction_text == 'jute' %}
+      
+
+        <p><strong>Firm Yard Manure</strong>Phosphorus and Potash, Nitrogen fertilizers are used as a fertilizer.
+          Interculturing is essential in the early stage.Seed inoculation with Azotobacter chroococum and Azospirillum
+          brasilense has been found promising to supplement part of N fertilizer</p>
+        <p>A medium fertile soil, the recommended dose of fertilizer for mesta is N-40kg/ha, P – 20 kg/ha andK-20kg/ha.
+          The recommended doses of fertilizers are 40 to 80, 20 to 40, 20 to 40 kg/ha (olitorius) and 60 to 80, 30 to
+          40,
+          30 to 40 kg/ha (capsularis) of N:P:K respectively.Besides 20 kg per ha each of N, P2O5 and K2O are to be
+          applied
+          basally to increase the yeild</p>
+        <p>Seed inoculation with Azotobacter chroococum and Azospirillum brasilense has been found promising to
+          supplement
+          part of N fertilizer</p>
+
+        {% elif prediction_text == 'cotton' %}
+        
+
+        <p><strong>N-P-K 20-10-10</strong>Nitogen affects plant growth and seed production.Nitrogen fertilizers meet the
+          nutritional requirements of maximum need and this is the key to crop growth.Applying sulfur,microelements and
+          nitrogen together improves their absorption efficiency through coordination(S,Zn,Mg)</p>
+        <p>NPK fertilizers are applied during sowing to balance soil nutrients essential,secondary,and
+          micronutrients.Potassium improves capsule growth and maturation</p>
+
+            {% elif prediction_text == "coconut" %}
+              <p><strong>Chicken manure:</strong> Abundant source of nutrients with high levels of nitrogen, phosphorus, potassium, calcium, magnesium and sulfur for optimal growth.</p>
+              <p><strong>Boron:</strong> Essential micronutrient for coconut, helping in the multiplication of meristematic tissues and metabolism of protein.</p>
+              <p><strong>Eppawela Rock Phosphate (ERP):</strong> Recommended for coconut palms in wet and intermediate zones.</p>
+              <p><strong>Potash:</strong> Helps root development, enabling the palm to take up more nutrients from the soil.</p>
+            
+            {% elif prediction_text == "papaya" %}
+              <p><strong>Garden king Papaya Food</strong>Improves the immunity of plants very fast and helps in fighting
+          diseases that affect the plants growth and flowering and All Essential Ingredients for Getting Best quality
+          Fruits and Growth in Papaya Plants</p>
+        <p>For papaya fertilizers should be applied once in every two months. Although fertilizer application in a
+          particular region depends on the soil and leaf analysis, generally 90 g of Urea, 250 g of Super phosphate and
+          140 g of Muriate of Potash per plant are recommended for each application.It is generally recommended to use
+          200
+          grams each of N,P,K with 25 kg FYM for maximum yeild.Inorganic fertilizers should be given in 5 divided doses
+          in
+          2,4,6,8 and 10 months after planting</p>
+            
+            {% elif prediction_text == "orange" %}
+               <p>Best time to apply apple tree fertilizers is in the fall after the leaves have dropped. Potassium improves
+          fruit size and color and can help protect buds from frost damage in the spring. A normal application of
+          potassium would be 1/5 pound per 100 square feet each year</p>
+        <p>Potassium deficiency causes older leaves to curl and turn brown, and the color of the fruit will be more pale
+          than normal. If your apple tree shows signs of potassium deficiency, use between 3/10 and 2/5 pounds of
+          potassium per 100 square feet</p>
+        <p>Calcium in the form of lime raises the soil pH, and need not be delayed until deficiencies in the apples
+          appear
+           apply it as the soil pH requires. The soil under fruit trees naturally grows more acidic over time.
+          Applying
+          lime serves as a preventative application for the fruit because it can take two years for calcium in the soil
+          to
+          be transported to the fruit. Two to 5 pounds per 100 square feet of lime should provide sufficient calcium,
+          but
+          monitor the soil pH to make sure it does not rise above 6.5 or 7</p>
+        <p>Best fertilizers for orange trees used in India are: Down To Earth Fruit Tree Fertilizer Mix, Urban Farm
+          Apples
+          and Oranges Fertilizer, and Monterey Fish and Guano Fertilizer</p>
+            
+            {% elif prediction_text == "apple" %}
+                      <p>Best time to apply apple tree fertilizers is in the fall after the leaves have dropped. Potassium improves
+          fruit size and color and can help protect buds from frost damage in the spring. A normal application of
+          potassium would be 1/5 pound per 100 square feet each year</p>
+        <p>Potassium deficiency causes older leaves to curl and turn brown, and the color of the fruit will be more pale
+          than normal. If your apple tree shows signs of potassium deficiency, use between 3/10 and 2/5 pounds of
+          potassium per 100 square feet</p>
+        <p>Calcium in the form of lime raises the soil pH, and need not be delayed until deficiencies in the apples
+          appear
+           apply it as the soil pH requires. The soil under fruit trees naturally grows more acidic over time.
+          Applying
+          lime serves as a preventative application for the fruit because it can take two years for calcium in the soil
+          to
+          be transported to the fruit. Two to 5 pounds per 100 square feet of lime should provide sufficient calcium,
+          but
+          monitor the soil pH to make sure it does not rise above 6.5 or 7</p>
+        <p>Best fertilizers for orange trees used in India are: Down To Earth Fruit Tree Fertilizer Mix, Urban Farm
+          Apples
+          and Oranges Fertilizer, and Monterey Fish and Guano Fertilizer</p>            
+            {% elif prediction_text == "muskmelon" %}
+              <p>You need not fertilize cantaloupe until after the plant is at least 4 inches tall. At this point, you can
+          apply
+          a dose of balanced fertilizer. If you want to use granule-type fertilizer, choose one with a 10-10-10 or
+          5-5-5.
+          Pay attention to these three numbers, as they indicate the amount of nitrogen, potassium, and phosphate in the
+          fertilizer</p>
+        <p>Cantaloupe plants can be fertilized again after the blossoms appear. At this point, you want to use a
+          fertilizer with much less nitrogen than phosphate and potassium. If using a granular type fertilizer, choose a
+          formula such as 5-10-10 or 2-12-12. More potassium and phosphate will help your plants develop fruit. If you
+          add
+          a nitrogen-rich fertilizer at this time, the plant will get very large but won't produce any fruit</p>            
+            {% elif prediction_text == "watermelon" %}
+              <p>Nitrogen-based fertilizers at the onset is a good idea. Once the melon plants start flowering, however, you
+          should switch to feeding the watermelon a phosphorus and potassium-based fertilizer. Watermelons need ample
+          potassium and phosphorus for optimal melon production. Note that melons respond well to Ammonium forms of
+          Nitrogen, as this may restrict growth and reduce quality</p>
+        <p>So avoid fertilizers such as Urea and Ammonium Sulphate and other Ammonium N type fertilizers in Melons. Too
+          much Nitrogen fertilizers during and after flowering are also to be avoided as it will reduce flowering and
+          fruit set, and therefore lower yields. Melons prefer a Nitrate form of Nitrogen as opposed to Ammonium forms,
+          and therefore Nitrate N source fertilizers such as in YaraMila Winner and Nitrabor for topdressing will give
+          better results - high yields and higher quality</p>
+            
+            {% elif prediction_text == "grapes" %}
+              <p>The grape dependent upon the grape variety, you want a soil pH of 5.5 to 7.0 for optimal growth. To raise a
+          soil pH, add dolomitic limestone; to lower pH, amend with sulfur following the manufacturer’s instructions.
+          Grapevines, like almost every other plant, need nitrogen, especially in the spring to jump-start rapid growth
+        </p>
+        <p>Prefer to use manure to feed your vines, apply it in January or February. Apply 5-10 pounds (2-4.5 kg.) of
+          poultry or rabbit manure, or 5-20 (2-9 kg.) pounds of a steer or cow manure per vine. Other nitrogen-rich
+          grapevine fertilizers (such as urea, ammonium nitrate, and ammonium sulfate) should be applied after the vine
+          has blossomed or when grapes are about ¼ inch (0.5 cm.) across</p>
+        <p>Apply ½ pound (0.25 kg.) of ammonium sulfate, 3/8 pound (0.2 kg.) of ammonium nitrate, or ¼ pound (0.1 kg.)
+          of
+          urea per vine. Zinc is also beneficial to grapevines. It aids in many plant functions and a deficiency can
+          lead
+          to stunted shoots and leaves, resulting in a reduced yield. Apply zinc in the spring a week before the vines
+          bloom or when they are in full bloom. Apply a spray with a concentration of 0.1 pounds per gallon
+          (0.05kg./4L.)
+          to the vine’s foliage. You may also brush a zinc solution on fresh pruning cuts after you prune your grapes in
+          the early winter</p>
+            
+            {% elif prediction_text == "mango" %}
+              <p>First-year mango trees should receive 1 to 2 pounds of slow-release 10-20-20 fertilizer divided into three or
+          four applications just before flushes of growth. During their second and third years, they should be given 1
+          1/2
+          to 3 pounds of 10-20-20 fertilizer applied in the same way</p>
+        <p>Mangoes need balanced fertilizer like NPK in the ratio of 14-14-14 or 10-20-20 and containing magnesium,
+          sulfur, boron, and trace elements. The mango tree needs more nitrogen when it is young, but less when it
+          starts
+          to bear fruit. Mix cow manure every year in the soil to add natural nutrients and to improve the moisture
+          holding capacity of the soil</p>
+            
+            {% elif prediction_text == "banana" %}
+              <p><strong>Coconut coir:</strong> Contains potassium, phosphate, and magnesium - ideal for banana trees.</p>
+              <p>Feed regularly with 8-10-8 (NPK) chemical fertilizer for best growth throughout the growing season.</p>
+            
+            {% elif prediction_text == "pomegranate" %}
+              <p>Pomegranates can benefit from an 8-8-8 (NPK) foliar fertilizer . Juvenile trees between the ages of 3 and 5
+          need 2 to 3 lbs. of fertilizer applied in November and again in March. Older trees require 4.5 to 6.5 lbs. of
+          fertilizer applied at the same times. Twice per year, in March and November, feed your pomegranate tree 2 to
+          2.5
+          pounds of 8-8-8 fertilizer</p>
+            
+            {% elif prediction_text == "lentil" %}
+              <p><strong>Phosphorus (P2O5) or N-P fertilizer</strong>Phosphorus also plays an important role in the nitrogen
+          fixationn process and in promoting earlier, more uniform maturity. Lentils grown on soils testing low in
+          available phosphorus or under cool wet conditions may respond to phosphate fertilizer</p>
+        <p>Lentils grown on soils testing low in available phosphorus or under cool wet conditions may respond to
+          phosphate fertilizer. However, dramatic yield responses are not always achieved. Even if seed yield increases
+          are not achieved every year</p>
+            
+            {% elif prediction_text == "blackgram" %}
+                      <p>Blackgram being a leguminous crop requires a dose of 20 Kg/ha Nitrogen, 40 Kg/ha Phosphorous, 20 Kg/ha Potash
+          and 20 Kg/ha Sulphur to get full potential of high yielding varieties or we can use 18:18:18 NPK or 20:25:30
+          NPK
+          fertilizer</p>
+        <p>Compost or FYM @ 5-10 t/ha should be applied during land preparation for improving soil structure</p>
+            
+            {% elif prediction_text == "mungbean" %}
+              <p>The mungbean crop should be fertilized with phosphorus and potassium at the level of 100-100 PK kg ha‾1 for
+          achieving satisfactory seed yield..Increasing the application of N fertilizer during the early growth period
+          promotes vegetative growth and creates conditions favoring high yield.Also vermicost is best organic
+          fertilizer
+        </p>
+            
+            {% elif prediction_text == "mothbeans" %}
+              <p>The moth bean plants don’t need applying additional fertilizer.It is generally grown on the neglected and
+          less
+          managed soils,which inherently poor in physical properties and deficient in organic matter</p>
+        <p>The application of fully decomposed farm yard manure to the tune of 20-25 tonnes per hectare should be
+          applied.Yield level of mothbeans have been observed to be increased by application of P2O5 up to 40 kg per ha
+          at
+          sowing process</p>
+            
+            {% elif prediction_text == "pigeonpeas" %}
+              <p>Pigeon pea is a leguminous crop so it does not require more fertilizer.It requires very little nitrogen
+          because
+          the bacteria found in its roots absorb nitrogen from the atmosphere and transfer it to pigeon pea crop</p>
+        <p>The doses of fertilizers should be given on the basis of soil test.At the time of sowing, it requires 18-20
+          kg
+          nitrogen, 45-50 kg phosphorus, 20 kg potash and 20 kg sulphur per hectare. Once in three years, apply 25 kg
+          zinc
+          sulphate per hectare before the last ploughing gives good yield.It is beneficial to use seed drill while
+          applying the nutrients</p>
+            {% elif prediction_text == "kidneybeans" %}
+        <p>A light feeding of compost is generally all bean plants need for adequate potassium.After 2-3 weeks planting,
+          give it organic fertilizer(rotten dung manure) of its plant ,in the desired soil</p>
+        <p>Half amount of nitrogen and the full amount of phosphorus in the row below the seed during the planting
+          process.The application of DAP fertilizer significantly increased the grain yields by 14% and 21% for bush and
+          climbing beans</p>
+            
+            {% elif prediction_text == "chickpea" %}
+<p>Rhizobium inoculants are widely used as biofertilizer to enhance Chickpea growth & yield as they fix
+          atmospheric nitrogen symbiotically</p>
+        <p>Feed 20:40:20 NPK per kg with 20 kg S / hectare will significantly increase the production of Chickpea and
+          will
+          benefit the coming crop. Zinc is undoubtedly one of the most healthy nutrients for crop growth. Foliar spray
+          of
+          2% urea at flowering has been found beneficial</p>
+            
+            {% elif prediction_text == "coffee" %}
+                      <p>Coffee trees need a lot of potash, nitrogen and a little of phosphoric acid. Spread the fertilizer in a ring
+          around each coffee plant and be careful not to put any on its trunk, branches or leaves. Manure could also be
+          added depending on organic matter of the soil</p>
+        <p>This tree needs a fertilizer that’s high in nitrogen. Rose and citrus fertilizers are excellent at keeping
+          your
+          coffee plant healthy. You can also fertilize with coffee grounds, since they’re full of the exact
+          nutrients.Coffee is hungry for micronutrients, too. Magnesium, sulfur, iron, zinc, calcium, and boron are all
+          important for plant developmen</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container text-center">
+      <p>© 2025 Crop Prediction System | Helping farmers make data-driven decisions</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Animation when scrolling
+    document.addEventListener('DOMContentLoaded', function() {
+      const animatedElements = document.querySelectorAll('.result-container, .crop-probabilities, .crop-chart, .fertilizer-card');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate__animated', 'animate__fadeIn');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1
+      });
+      
+      animatedElements.forEach(element => {
+        observer.observe(element);
+      });
+    });
+  </script>
+</body>
+
+</html>

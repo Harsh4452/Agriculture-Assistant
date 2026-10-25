@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile </title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+         :root {
+            --primary-color: #2E7D32;
+            --primary-light: #4CAF50;
+            --secondary-color: #66BB6A; 
+            --accent-color: #FFA000;
+            --text-dark: #343a40;
+            --text-light: #f8f9fa;
+            --card-bg: #ffffff;
+            --light-bg: #f9fbf7;
+            --dark-bg: #263238;
+            --text-dark: #212121;
+            --text-muted: #78909C;
+            --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4f0e2 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+                .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 12px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px !important;
+            border-radius: 6px;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .profile-header h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .profile-header::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--accent-color);
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            margin: 0 auto 20px;
+        }
+
+        .profile-details {
+            padding: 0 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-light);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .detail-content h5 {
+            color: var(--primary-dark);
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+
+        .detail-content p {
+            color: var(--text-dark);
+            margin-bottom: 0;
+            font-size: 15px;
+        }
+
+        .btn-custom {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(61, 139, 64, 0.3);
+            margin-top: 20px;
+        }
+
+        .btn-custom:hover {
+            background-color: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(61, 139, 64, 0.4);
+        }
+
+        .btn-custom i {
+            margin-right: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-edit {
+            background-color: var(--accent-color);
+            color: var(--text-dark);
+        }
+
+        .btn-edit:hover {
+            background-color: #e0a800;
+            color: var(--text-dark);
+        }
+
+        @media (max-width: 576px) {
+            .profile-container {
+                padding: 30px 20px;
+            }
+            
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .detail-icon {
+                margin-bottom: 10px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-container {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    
+    <div class="container">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-pic">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h1>{{ current_user.username }}</h1>
+            </div>
+            <div class="profile-details">
+                {% if current_user.is_authenticated %}
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h5>Username</h5>
+                            <p>{{ current_user.username }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h5>Email</h5>
+                            <p>{{ current_user.email }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h5>Member Since</h5>
+                            <p>{{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if current_user.last_login %}
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="detail-content">
+                            <h5>Last Login</h5>
+                            <p>{{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-warning text-center">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Please log in to view your profile
+                    </div>
+                {% endif %}
+                
+                <div class="action-buttons">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-custom">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                        <a href="{{ url_for('logout') }}" class="btn btn-custom" style="background-color: #dc3545;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-custom">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                        <a href="{{ url_for('register') }}" class="btn btn-custom btn-edit">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        
+            
+            // Generate random color for profile pic background
+            const colors = ['#3d8b40', '#2c3e50', '#8e44ad', '#e74c3c', '#3498db'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            $('.profile-pic').css('background-color', randomColor);
+    </script>
+</body>
+</html>

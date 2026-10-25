@@ -1,0 +1,157 @@
+{% extends 'basic1.html' %}
+{% block title %}Crop Prediction{% endblock %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #8BC34A;
+            --accent-color: #FF9800;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+        }
+        
+        .navbar {
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: white !important;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container mt-2">
+  <br>
+  <h1><strong>
+      <center>Crop Prediction</center>
+    </strong></h1>
+  <br><br>
+
+  <div class="container col-md-7">
+    <div class="card text-white bg-info mb-3">
+
+      <form action="/predict" method="post">
+
+        <div class="container mt-4">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="">Nitrogen</label>
+              <select class="form-control" name="nitrogen" required>
+                <option value="" disabled selected>Select Nitrogen Level</option>
+                {% for i in range(1, 201) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="">Phosphorous</label>
+              <select class="form-control" name="phosphorus" required>
+                <option value="" disabled selected>Select Phosphorous Level</option>
+                {% for i in range(1, 201) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="">Potassium</label>
+              <select class="form-control" name="pottasium" required>
+                <option value="" disabled selected>Select Potassium Level</option>
+                {% for i in range(1, 201) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-group col-md-6">
+              <label for="">Temperature</label>
+              <select class="form-control" name="temperature" required>
+                <option value="" disabled selected>Select Temperature (degree)</option>
+                {% for i in range(1, 66) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="">Humidity</label>
+              <select class="form-control" name="humidity" required>
+                <option value="" disabled selected>Select Humidity (percentage)</option>
+                {% for i in range(1, 101) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="">PH</label>
+              <select class="form-control" name="ph" required>
+                <option value="" disabled selected>Select PH (1-14)</option>
+                {% for i in range(1, 15) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="">Rainfall</label>
+              <select class="form-control" name="rainfall" required>
+                <option value="" disabled selected>Select Rainfall</option>
+                {% for i in range(1, 1001) %}
+                <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="">Water Usage</label>
+              <select class="form-control" name="Water Level" required>
+                <option value="" disabled selected>Select Water Level (0-1)</option>
+                {% for i in range(0, 101) %}
+                <option value="{{ i/100.0 }}">{{ i/100.0 }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <center>
+            <button type="submit" class="btn btn-primary mb-4" value=" Submit ">Submit</button>
+          </center>
+        </div>
+      </form>
+
+      {{ prediction_text }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+</body>
+</html>

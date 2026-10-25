@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XGBoost Crop Yield Predictor</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 1rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+        }
+        .input-group label {
+            font-weight: 600;
+            color: #374151; /* Darker gray for labels */
+        }
+        .input-group input, .input-group select {
+            border: 1px solid #d1d5db; /* Light gray border */
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3b82f6; /* Blue focus border */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Blue focus shadow */
+        }
+        .predict-button {
+            background-color: #22c55e; /* Green button */
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); /* Green shadow */
+        }
+        .predict-button:hover {
+            background-color: #16a34a; /* Darker green on hover */
+            transform: translateY(-2px);
+        }
+        .predict-button:active {
+            transform: translateY(0);
+        }
+        .result-box {
+            background-color: #e0f2f7; /* Light blue background for result */
+            border: 1px solid #a7d9ed; /* Blue border */
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #0c4a6e; /* Dark blue text */
+            text-align: center;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-6">
+            🌾 Crop Yield Prediction
+        </h1>
+
+        {% if prediction %}
+        <div class="prediction-result">
+            <h3>{{ prediction }}</h3>
+        </div>
+        {% endif %}
+
+        <p class="text-center text-gray-600 mb-8">
+            Enter the feature values below to predict the crop yield (tons per hectare).
+        </p>
+
+        <form id="yield_prediction" class="grid grid-cols-1 md:grid-cols-2 gap-6" method=POST>
+            <!-- Input fields for new features -->
+            <div class="input-group">
+                <label for="State_Name" class="block text-sm mb-2">State Name:</label>
+                <input type="text" id="State_Name" name="State_Name" value="Karnataka" required>
+            </div>
+            <div class="input-group">
+                <label for="district" class="block text-sm mb-2">District:</label>
+                <input type="text" id="district" name="district" value="Bangalore" required>
+            </div>
+            <div class="input-group">
+                <label for="Crop_Year" class="block text-sm mb-2">Crop Year:</label>
+                <input type="number" id="Crop_Year" name="Crop_Year" value="2020" required>
+            </div>
+            <div class="input-group">
+                <label for="temperature" class="block text-sm mb-2">Temperature (°C):</label>
+                <input type="number" id="temperature" name="temperature" step="any" value="25.5" required>
+            </div>
+            <div class="input-group">
+                <label for="humidity" class="block text-sm mb-2">Humidity (%):</label>
+                <input type="number" id="humidity" name="humidity" step="any" value="70.0" required>
+            </div>
+            <div class="input-group">
+                <label for="Soil_Moisture" class="block text-sm mb-2">Soil Moisture (%):</label>
+                <input type="number" id="Soil_Moisture" name="Soil_Moisture" step="any" value="45.0" required>
+            </div>
+            <div class="input-group">
+                <label for="Area_in_hectares" class="block text-sm mb-2">Area (In hectares):</label>
+                <input type="number" id="Area_in_hectares" name="Area_in_hectares" step="any" value="10.0" required>
+            </div>
+            <div class="input-group">
+                <label for="Production_in_tons" class="block text-sm mb-2">Production (tons):</label>
+                <input type="number" id="Production_in_tons" name="Production_in_tons" step="any" value="250.0" required>
+            </div>
+            <div class="input-group">
+                <label for="N" class="block text-sm mb-2">Nitrogen (N):</label>
+                <input type="number" id="N" name="N" step="any" value="70" required>
+            </div>
+            <div class="input-group">
+                <label for="P" class="block text-sm mb-2">Phosphorus (P):</label>
+                <input type="number" id="P" name="P" step="any" value="40" required>
+            </div>
+            <div class="input-group">
+                <label for="K" class="block text-sm mb-2">Potassium (K):</label>
+                <input type="number" id="K" name="K" step="any" value="30" required>
+            </div>
+            <div class="input-group">
+                <label for="pH" class="block text-sm mb-2">pH:</label>
+                <input type="number" id="pH" name="pH" step="any" value="6.5" required>
+            </div>
+            <div class="input-group">
+                <label for="rainfall" class="block text-sm mb-2">Rainfall (mm):</label>
+                <input type="number" id="rainfall" name="rainfall" step="any" value="1200" required>
+            </div>
+            
+            <div class="md:col-span-2 flex justify-center mt-6">
+                <button type="submit" class="predict-button">
+                    Predict Yield
+                </button>
+            </div>
+        </form>
+
+        <div id="loadingSpinner" class="loading-spinner mt-8"></div>
+        <div id="predictionResult" class="result-box hidden">
+            Predicted Yield: <span id="yieldValue" class="font-bold"></span> tons/hectare
+        </div>
+        <div id="errorMessage" class="result-box hidden bg-red-100 border-red-400 text-red-700">
+            Error: <span id="errorText"></span>
+        </div>
+        <button type="submit">Predict Yield</button>
+    </div>
+</body>
+</html>

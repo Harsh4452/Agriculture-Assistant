@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <div class="card shadow p-5">
+        <h1 class="display-1 text-secondary">
+            <i class="fas fa-exclamation-triangle"></i>
+            304</h1>
+        <h4 class="mb-3">Not Modified</h4>
+        <p class="text-muted">This page has not changed since your last visit.</p>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary mt-3">Go to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

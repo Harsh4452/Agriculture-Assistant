@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Yield History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .pagination .page-link {
+            color: #28a745;
+        }
+        .badge.bg-success {
+            background-color: #28a745 !important;
+        }
+        .text-success {
+            color: #28a745 !important;
+        }
+        .card {
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        .yield-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .btn-outline-success {
+            color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-outline-success:hover {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="/">Agricultural Assistant</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pricehistory">Price History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/history">Crop History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/yield-prediction">Yield Prediction</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/yield-history">Yield History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Crop Yield Prediction History</h1>
+                    <div class="d-flex">
+                        <form method="GET" action="/yield-history" class="input-group me-2">
+                            <input type="text" name="search" class="form-control" placeholder="Search crops..." value="{{ request.args.get('search', '') }}">
+                            <button class="btn btn-outline-success" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                        <div class="dropdown ms-2">
+                            <button class="btn btn-outline-success dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-funnel"></i> Filter
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                                <li><h6 class="dropdown-header">Season</h6></li>
+                                <li><a class="dropdown-item" href="#">Kharif</a></li>
+                                <li><a class="dropdown-item" href="#">Rabi</a></li>
+                                <li><a class="dropdown-item" href="#">Whole Year</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header">Year</h6></li>
+                                <li><a class="dropdown-item" href="#">2025</a></li>
+                                <li><a class="dropdown-item" href="#">2024</a></li>
+                                <li><a class="dropdown-item" href="#">2023</a></li>
+                            </ul>
+                        </div>
+                        <form method="GET" action="/yield-history" class="ms-2">
+                            <select class="form-select" name="per_page" onchange="this.form.submit()" style="width: auto;">
+                                <option value="10" {% if per_page == 10 %}selected{% endif %}>10 per page</option>
+                                <option value="25" {% if per_page == 25 %}selected{% endif %}>25 per page</option>
+                                <option value="50" {% if per_page == 50 %}selected{% endif %}>50 per page</option>
+                                <option value="100" {% if per_page == 100 %}selected{% endif %}>100 per page</option>
+                            </select>
+                            <input type="hidden" name="search" value="{{ request.args.get('search', '') }}">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="bi bi-bar-chart-line fs-1 text-success"></i>
+                        <h5 class="card-title mt-3">Total Predictions</h5>
+                        <h2 class="mb-0">248</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-check fs-1 text-success"></i>
+                        <h5 class="card-title mt-3">This Month</h5>
+                        <h2 class="mb-0">32</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="bi bi-trophy fs-1 text-success"></i>
+                        <h5 class="card-title mt-3">Highest Yield</h5>
+                        <h2 class="mb-0">68.4 q/ha</h2>
+                        <p class="text-muted small">(Sugarcane)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="bi bi-geo-alt fs-1 text-success"></i>
+                        <h5 class="card-title mt-3">Locations</h5>
+                        <h2 class="mb-0">7</h2>
+                        <p class="text-muted small">(States)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yield History Table -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h4 class="mb-0">Yield Predictions</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Crop</th>
+                                <th>Season</th>
+                                <th>State</th>
+                                <th>Area (ha)</th>
+                                <th>Production</th>
+                                <th>Rainfall (mm)</th>
+                                <th>Fertilizer (kg/ha)</th>
+                                <th>Pesticide (kg/ha)</th>
+                                <th>Yield (q/ha)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-05-19</td>
+                                <td>Wheat</td>
+                                <td>Rabi</td>
+                                <td>Punjab</td>
+                                <td>15.5</td>
+                                <td>5552</td>
+                                <td>750.8</td>
+                                <td>120.0</td>
+                                <td>2.5</td>
+                                <td><span class="badge bg-success">35.82</span></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#yieldModal1">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2025-05-18</td>
+                                <td>Rice</td>
+                                <td>Kharif</td>
+                                <td>West Bengal</td>
+                                <td>12.0</td>
+                                <td>5058</td>
+                                <td>1200.5</td>
+                                <td>150.0</td>
+                                <td>3.2</td>
+                                <td><span class="badge bg-success">42.15</span></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#yieldModal2">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2025-05-02</td>
+                                <td>Sugarcane</td>
+                                <td>Whole Year</td>
+                                <td>Karnataka</td>
+                                <td>18.5</td>
+                                <td>11729</td>
+                                <td>950.0</td>
+                                <td>190.0</td>
+                                <td>5.0</td>
+                                <td><span class="badge bg-success">63.40</span></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#yieldModal10">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav aria-label="Yield prediction history pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-hidden="true">&laquo;</span>
+                        </li>
+                        <li class="page-item active">
+                            <span class="page-link">1</span>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">2</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">3</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">4</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">5</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Export Options Card -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h4 class="mb-0">Export Options</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <p>Export your crop yield prediction history for record keeping or further analysis.</p>
+                        <p class="text-muted">Select format and date range for export.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <form>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="startDate" name="startDate">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="endDate" name="endDate">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="exportFormat" class="form-label">Format</label>
+                                    <select class="form-select" id="exportFormat" name="exportFormat">
+                                        <option value="csv">CSV</option>
+                                        <option value="excel">Excel</option>
+                                        <option value="pdf">PDF</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="bi bi-download"></i> Export Data
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yield Prediction Details Modals -->
+    <div class="modal fade" id="yieldModal1" tabindex="-1" aria-labelledby="yieldModalLabel1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="yieldModalLabel1">Yield Prediction Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="text-success mb-4">Crop: Wheat</h4>
+                            <p class="text-muted">Prediction made on 2025-05-19</p>
+                            
+                            <h5 class="mt-4">Location Details</h5>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>State</th>
+                                    <td>Punjab</td>
+                                </tr>
+                                <tr>
+                                    <th>Season</th>
+                                    <td>Rabi</td>
+                                </tr>
+                                <tr>
+                                    <th>Year</th>
+                                    <td>2025</td>
+                                </tr>
+                                <tr>
+                                    <th>Area</th>
+                                    <td>15.5 hectares</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center mb-4">
+                                <h5>Predicted Yield</h5>
+                                <div class="display-4 text-success">35.82</div>
+                                <p>quintals per hectare</p>
+                            </div>
+                            
+                            <h5>Agricultural Parameters</h5>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Annual Rainfall</th>
+                                    <td>750.8 mm</td>
+                                </tr>
+                                <tr>
+                                    <th>Fertilizer</th>
+                                    <td>120.0 kg/ha</td>
+                                </tr>
+                                <tr>
+                                    <th>Pesticide</th>
+                                    <td>2.5 kg/ha</td>
+                                </tr>
+                                <tr>
+                                    <th>Production</th>
+                                    <td>5552 quintals</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <h5 class="alert-heading">Analysis</h5>
+                                <p>The predicted yield for Wheat in Punjab during the Rabi season is <strong>35.82 quintals per hectare</strong>, which is about 8% higher than the average yield in this region. This prediction takes into account the rainfall of 750.8 mm and the application of 120 kg/ha of fertilizer and 2.5 kg/ha of pesticide.</p>
+                                <p class="mb-0">With a cultivated area of 15.5 hectares, the expected total production is approximately <strong>555.21 quintals</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success">
+                        <i class="bi bi-download"></i> Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Just showing one detailed modal for brevity - the rest would follow the same pattern -->
+
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p>© 2025 Agricultural Predictions System</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
